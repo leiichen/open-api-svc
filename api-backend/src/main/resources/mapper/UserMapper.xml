@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leichen.backend.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.leichen.backend.model.DO.UserDO">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+            <result property="userAvatar" column="user_avatar" jdbcType="VARCHAR"/>
+            <result property="gender" column="gender" jdbcType="TINYINT"/>
+            <result property="userRole" column="user_role" jdbcType="VARCHAR"/>
+            <result property="userPassword" column="user_password" jdbcType="VARCHAR"/>
+            <result property="accessKey" column="access_key" jdbcType="VARCHAR"/>
+            <result property="secretKey" column="secret_key" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,user_name,user_avatar,gender,user_role,user_password,accessKey,secretKey,create_time,update_time
+    </sql>
+    <sql id="Base_Condition">
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="userName != null">
+                and user_name = #{userName}
+            </if>
+            <if test="userAvatar != null">
+                and user_avatar = #{userAvatar}
+            </if>
+            <if test="gender != null">
+                and gender = #{gender}
+            </if>
+            <if test="userRole != null">
+                and user_role = #{userRole}
+            </if>
+            <if test="userPassword != null">
+                and user_password = #{userPassword}
+            </if>
+        </where>
+    </sql>
+    <insert id="save">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="userAvatar != null">
+                user_avatar,
+            </if>
+            <if test="gender != null">
+                gender,
+            </if>
+            <if test="userRole != null">
+                user_role,
+            </if>
+            <if test="userPassword != null"></if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null">
+                #{userName},
+            </if>
+            <if test="userAvatar != null">
+                #{userAvatar},
+            </if>
+            <if test="gender != null">
+                #{gender},
+            </if>
+            <if test="userRole != null">
+                #{userRole},
+            </if>
+            <if test="userPassword != null">
+                #{userPassword},
+            </if>
+        </trim>
+    </insert>
+    <update id="update">
+        update user
+        <set>
+            <if test="userName != null">
+                user_name = #{userName},
+            </if>
+            <if test="userAvatar != null">
+                user_avatar = #{userAvatar},
+            </if>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <if test="userRole != null">
+                user_role = #{userRole},
+            </if>
+            <if test="userPassword != null">
+                user_password = #{userPassword},
+            </if>
+        </set>
+        where id =#{id}
+    </update>
+    <delete id="delete">
+        delete from user
+        where id = #{id}
+    </delete>
+    <select id="queryCount" resultType="java.lang.Integer">
+        select count(1)
+        from user
+        <include refid="Base_Condition"></include>
+    </select>
+    <select id="queryPage" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from user
+        <include refid="Base_Condition"></include>
+        <if test="sortField != null and sortField != ''">
+            ${sortField} ${sortOrder},
+        </if>
+        limit #{getOffSet()},#{pageSize}
+    </select>
+    <select id="getUserById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from user
+        where id = #{id}
+    </select>
+    <select id="selectOne" resultMap="BaseResultMap" parameterType="com.leichen.backend.model.PO.UserPO">
+        select
+        <include refid="Base_Column_List"></include>
+        from user
+        <include refid="Base_Condition"></include>
+        limit 1
+    </select>
+
+</mapper>

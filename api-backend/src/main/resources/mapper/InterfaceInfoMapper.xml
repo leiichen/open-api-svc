@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leichen.backend.mapper.InterfaceInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.leichen.backend.model.DO.InterfaceInfoDO">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="url" column="url" jdbcType="VARCHAR"/>
+            <result property="requestHeader" column="request_header" jdbcType="VARCHAR"/>
+            <result property="responseHeader" column="response_header" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="INTEGER"/>
+            <result property="method" column="method" jdbcType="VARCHAR"/>
+            <result property="updatedBy" column="updated_by" jdbcType="VARCHAR"/>
+            <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,`name`,description,url,request_header,response_header,status,`method`,updated_by,created_by,create_time,update_time
+    </sql>
+    <sql id="Base_Condition">
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and `name` = #{name}
+            </if>
+            <if test="description != null and description != ''">
+                and description like concat('%',#{description},'%')
+            </if>
+            <if test="url != null and url != ''">
+                and url = #{url}
+            </if>
+            <if test="requestHeader != null and requestHeader != ''">
+                and request_header = #{requestHeader}
+            </if>
+            <if test="responseHeader != null and responseHeader != ''">
+                and response_header = #{responseHeader}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="method != null and method != ''">
+                and method = #{method}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="updatedBy != null and updatedBy != ''">
+                and updated_by = #{updatedBy}
+            </if>
+        </where>
+    </sql>
+    <insert id="save">
+        insert into interface_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="url != null">
+                url,
+            </if>
+            <if test="requestHeader != null">
+                request_header,
+            </if>
+            <if test="responseHeader != null">
+                response_header,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="method != null">
+                method,
+            </if>
+            <if test="updatedBy != null">
+                updated_by,
+            </if>
+            <if test="createdBy != null">
+                created_by,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="description != null">
+                #{description},
+            </if>
+            <if test="url != null">
+                #{url},
+            </if>
+            <if test="requestHeader != null">
+                #{requestHeader},
+            </if>
+            <if test="responseHeader != null">
+                #{responseHeader},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="method != null">
+                #{method},
+            </if>
+            <if test="updatedBy != null">
+                #{updatedBy},
+            </if>
+            <if test="createdBy != null">
+                #{createdBy},
+            </if>
+        </trim>
+    </insert>
+    <update id="update">
+        update interface_info
+        <set>
+            <if test="name != null">
+                `name` = #{name},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="url != null">
+                url = #{url},
+            </if>
+            <if test="requestHeader != null">
+                request_header = #{requestHeader},
+            </if>
+            <if test="responseHeader != null">
+                response_header= #{responseHeader},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="delete">
+        delete from interface_info where id = #{id}
+    </delete>
+    <select id="queryPage" resultMap="BaseResultMap"
+            parameterType="com.leichen.backend.model.PO.InterfaceInfoPO">
+        select
+        <include refid="Base_Column_List"/>
+        from interface_info
+        <include refid="Base_Condition"/>
+        order by
+        <if test="sortField != null and sortField != ''">
+            ${sortField} ${sortOrder}
+        </if>
+        limit #{offset},#{pageSize}
+    </select>
+    <select id="queryCount" resultType="java.lang.Integer">
+        select count(1) from interface_info
+        <include refid="Base_Condition"/>
+    </select>
+    <select id="getInterfaceById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from interface_info
+        where id = #{id}
+    </select>
+</mapper>
