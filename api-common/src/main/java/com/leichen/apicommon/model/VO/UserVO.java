@@ -1,17 +1,16 @@
-package com.leichen.backend.model.BO;
+package com.leichen.apicommon.model.VO;
 
-import com.leichen.backend.common.PageRequest;
 import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserBO extends PageRequest implements Serializable {
+public class UserVO implements Serializable {
+    private static final long serialVersionUID = 1L;
     /**
      * id
      */
@@ -21,11 +20,6 @@ public class UserBO extends PageRequest implements Serializable {
      * 用户昵称（账号）
      */
     private String userName;
-
-    /**
-     * 用户密码
-     */
-    private String userPassword;
 
     /**
      * 用户头像
@@ -62,5 +56,4 @@ public class UserBO extends PageRequest implements Serializable {
      */
     private Date updateTime;
 
-    private static final long serialVersionUID = 1L;
 }

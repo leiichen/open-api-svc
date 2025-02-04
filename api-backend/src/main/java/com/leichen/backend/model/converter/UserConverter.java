@@ -22,6 +22,8 @@ public interface UserConverter {
 
     UserVO toUserVO(UserDO userDO);
 
+    com.leichen.apicommon.model.VO.UserVO toCommonUserVO(UserDO userDO);
+
     UserBO toUserBO(UserRequest userRequest);
 
     UserBO toUserBO(UserDO userDO);

@@ -1,5 +1,6 @@
 package com.leichen.backend.Repository;
 
+import com.leichen.apicommon.model.entity.InterfaceInfo;
 import com.leichen.backend.mapper.InterfaceInfoMapper;
 import com.leichen.backend.model.BO.InterfaceInfoBO;
 import com.leichen.backend.model.DO.InterfaceInfoDO;
@@ -42,5 +43,9 @@ public class InterfaceInfoRepository {
     public void update(InterfaceInfoBO interfaceInfoBO) {
         InterfaceInfoPO interfaceInfoPO = InterfaceInfoConverter.INSTANCE.toInterfaceInfoPO(interfaceInfoBO);
         interfaceInfoMapper.update(interfaceInfoPO);
+    }
+
+    public InterfaceInfoDO getInterface(String path, String method) {
+        return interfaceInfoMapper.getInterface(path, method);
     }
 }

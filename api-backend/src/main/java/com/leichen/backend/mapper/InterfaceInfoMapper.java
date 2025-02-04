@@ -1,7 +1,9 @@
 package com.leichen.backend.mapper;
 
+import com.leichen.apicommon.model.entity.InterfaceInfo;
 import com.leichen.backend.model.DO.InterfaceInfoDO;
 import com.leichen.backend.model.PO.InterfaceInfoPO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -24,6 +26,8 @@ public interface InterfaceInfoMapper {
     InterfaceInfoDO getInterfaceById(Long id);
 
     void update(InterfaceInfoPO interfaceInfoPO);
+
+    InterfaceInfoDO getInterface(@Param("path") String path, @Param("method") String method);
 }
 
 

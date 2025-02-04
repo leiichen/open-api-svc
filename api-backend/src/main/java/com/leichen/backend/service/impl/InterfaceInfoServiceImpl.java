@@ -1,12 +1,21 @@
 package com.leichen.backend.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.json.JSONNull;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.apiclient.client.ApiClient;
+import com.apiclient.config.ApiClientConfig;
+import com.apiclient.model.request.BaseRequest;
+import com.apiclient.model.response.ResultResponse;
+import com.apiclient.service.BaseService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.leichen.backend.Repository.InterfaceInfoRepository;
 import com.leichen.backend.common.BaseResponse;
 import com.leichen.backend.common.ErrorCode;
 import com.leichen.backend.common.PageResp;
+import com.leichen.backend.common.ResultUtils;
 import com.leichen.backend.exception.BusinessException;
 import com.leichen.backend.model.BO.InterfaceInfoBO;
 import com.leichen.backend.model.BO.UserBO;
@@ -19,6 +28,7 @@ import com.leichen.backend.service.InterfaceInfoService;
 import com.leichen.backend.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -28,19 +38,23 @@ import static com.leichen.backend.constant.UserConstant.ADMIN_ROLE;
 
 
 /**
-* @author lei
-* @description 针对表【interface_info(接口信息)】的数据库操作Service实现
-* @createDate 2024-09-28 14:16:37
-*/
+ * @author lei
+ * @description 针对表【interface_info(接口信息)】的数据库操作Service实现
+ * @createDate 2024-09-28 14:16:37
+ */
 @Service
 @Slf4j
 public class InterfaceInfoServiceImpl implements InterfaceInfoService {
 
     @Resource
     private InterfaceInfoRepository interfaceInfoRepository;
+
+    @Resource
+    private BaseService baseService;
+
     @Override
     public PageResp<InterfaceInfoBO> queryPage(InterfaceInfoBO interfaceInfoBO) {
-        Integer total =  interfaceInfoRepository.queryCount(interfaceInfoBO);
+        Integer total = interfaceInfoRepository.queryCount(interfaceInfoBO);
         PageResp<InterfaceInfoBO> interfaceInfoBOPageResp = new PageResp<>();
         if (total == 0) {
             interfaceInfoBOPageResp.setTotal(0);
@@ -97,6 +111,7 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public BaseResponse<Object> invokeInterfaceInfo(InvokeRequest invokeRequest) {
         Long interfaceId = invokeRequest.getInterfaceId();
         InterfaceInfoDO interfaceInfoDO = interfaceInfoRepository.getInterfaceById(interfaceId);
@@ -104,19 +119,33 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口未开启");
         }
         List<InvokeRequest.Field> userRequestParams = invokeRequest.getUserRequestParams();
-        JsonObject jsonObject = new JsonObject();
-        for (InvokeRequest.Field userRequestParam : userRequestParams) {
-            String field = userRequestParam.getField();
-            String value = userRequestParam.getValue();
-            jsonObject.addProperty(field, value);
+        HashMap<String, Object> params = new HashMap<>();
+        if (CollUtil.isNotEmpty(userRequestParams)) {
+            JSONObject jsonObject = new JSONObject();
+            for (InvokeRequest.Field userRequestParam : userRequestParams) {
+                String field = userRequestParam.getField();
+                String value = userRequestParam.getValue();
+                jsonObject.putOnce(field, value);
+            }
+            params = JSONUtil.toBean(jsonObject, HashMap.class);
         }
-        String json = JSONUtil.toJsonStr(jsonObject);
-        HashMap map = JSONUtil.toBean(json, HashMap.class);
-
         UserBO userBO = UserHolder.getUser();
-        return null;
+        String accessKey = userBO.getAccessKey();
+        String secretKey = userBO.getSecretKey();
+        try {
+            ApiClient apiClient = new ApiClient(accessKey, secretKey);
+            BaseRequest baseRequest = BaseRequest.builder()
+                    .path(interfaceInfoDO.getUrl())
+                    .method(interfaceInfoDO.getMethod())
+                    .requestParams(params)
+                    .build();
+            ResultResponse response = baseService.request(apiClient, baseRequest);
+            return ResultUtils.success(response);
+        } catch (Exception e) {
+            log.error("调用接口失败", e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, e.getMessage());
+        }
     }
-
 }
 
 

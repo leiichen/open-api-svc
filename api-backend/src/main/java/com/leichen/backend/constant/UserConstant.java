@@ -29,5 +29,13 @@ public interface UserConstant {
      */
     String ADMIN_ROLE = "admin";
 
-    // endregion
+    /**
+     * salt
+     */
+    String SALT = "lei.chen";
+
+    /**
+     * ak/sk混淆
+     */
+    String VOUCHER = "accessKey_secretKey";
 }

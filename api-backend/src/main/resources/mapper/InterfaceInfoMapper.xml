@@ -164,4 +164,11 @@
         from interface_info
         where id = #{id}
     </select>
+    <select id="getInterface" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from interface_info
+        where url like #{path}
+        and method = #{method}
+    </select>
 </mapper>

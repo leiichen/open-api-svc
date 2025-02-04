@@ -21,8 +21,8 @@
         <junit.version>4.13.2</junit.version>
         <api-client.version>0.0.1</api-client.version>
         <dubbo.version>3.0.9</dubbo.version>
-        <nacos-client.version>2.1.0</nacos-client.version>
         <api-common.version>0.0.1</api-common.version>
+        <nacos-client.version>2.1.0</nacos-client.version>
     </properties>
 
     <modules>

@@ -47,4 +47,8 @@ public class UserRepository {
         UserPO userPO = UserConverter.INSTANCE.toUserPO(userBO);
         return userMapper.selectOne(userPO);
     }
+
+    public UserDO getUserByAccessKey(String accessKey) {
+        return userMapper.getUserByAccessKey(accessKey);
+    }
 }

@@ -18,7 +18,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,user_name,user_avatar,gender,user_role,user_password,accessKey,secretKey,create_time,update_time
+        id,user_name,user_avatar,gender,user_role,user_password,access_key,secret_key,create_time,update_time
     </sql>
     <sql id="Base_Condition">
         <where>
@@ -57,7 +57,15 @@
             <if test="userRole != null">
                 user_role,
             </if>
-            <if test="userPassword != null"></if>
+            <if test="userPassword != null">
+                user_password,
+            </if>
+            <if test="accessKey != null">
+                access_key,
+            </if>
+            <if test="secretKey != null">
+                secret_key,
+            </if>
         </trim>
         values
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -75,6 +83,12 @@
             </if>
             <if test="userPassword != null">
                 #{userPassword},
+            </if>
+            <if test="accessKey != null">
+                #{accessKey},
+            </if>
+            <if test="secretKey != null">
+                #{secretKey},
             </if>
         </trim>
     </insert>
@@ -130,6 +144,12 @@
         from user
         <include refid="Base_Condition"></include>
         limit 1
+    </select>
+    <select id="getUserByAccessKey" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from user
+        where access_key = #{accessKey}
     </select>
 
 </mapper>

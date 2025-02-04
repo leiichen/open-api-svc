@@ -21,6 +21,8 @@ public interface UserMapper {
     void update(UserPO userPO);
 
     UserDO selectOne(UserPO userPO);
+
+    UserDO getUserByAccessKey(String accessKey);
 }
 
 

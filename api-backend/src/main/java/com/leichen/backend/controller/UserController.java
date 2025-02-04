@@ -48,7 +48,7 @@ public class UserController {
         String userPassword = userRegisterReq.getUserPassword();
         String checkPassword = userRegisterReq.getCheckPassword();
         if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         long result = userService.userRegister(userAccount, userPassword, checkPassword);
         return ResultUtils.success(result);

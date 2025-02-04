@@ -1,5 +1,6 @@
 package com.leichen.backend.service.impl;
 
+import cn.hutool.core.lang.UUID;
 import com.leichen.backend.Repository.UserRepository;
 import com.leichen.backend.common.ErrorCode;
 import com.leichen.backend.common.PageResp;
@@ -18,7 +19,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-import static com.leichen.backend.constant.UserConstant.USER_LOGIN_STATE;
+import static com.leichen.backend.constant.UserConstant.*;
 
 
 @Service
@@ -27,11 +28,6 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private UserRepository userRepository;
-
-    /**
-     * 盐值，混淆密码
-     */
-    private static final String SALT = "lei.chen";
 
     @Override
     public long userRegister(String userName, String userPassword, String checkPassword) {
@@ -50,9 +46,13 @@ public class UserServiceImpl implements UserService {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
             }
             String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
+            String accessKey = DigestUtils.md5DigestAsHex((UUID.randomUUID() + userName + VOUCHER).getBytes());
+            String secretKey = DigestUtils.md5DigestAsHex((userName + VOUCHER + UUID.randomUUID()).getBytes());
             UserBO userBO = UserBO.builder()
                     .userName(userName)
                     .userPassword(encryptPassword)
+                    .accessKey(accessKey)
+                    .secretKey(secretKey)
                     .build();
             userRepository.save(userBO);
             return userBO.getId();
@@ -116,13 +116,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PageResp<UserBO> queryPage(UserBO userBO) {
-        Integer total =  userRepository.queryCount(userBO);
+        Integer total = userRepository.queryCount(userBO);
         PageResp<UserBO> userBOPageResp = new PageResp<>();
         if (total == 0) {
             userBOPageResp.setTotal(0);
             return userBOPageResp;
         }
-        List<UserDO> userDOList =  userRepository.queryPage(userBO);
+        List<UserDO> userDOList = userRepository.queryPage(userBO);
         List<UserBO> userBOList = UserConverter.INSTANCE.toUserBOList(userDOList);
         userBOPageResp.setTotal(total);
         userBOPageResp.setList(userBOList);

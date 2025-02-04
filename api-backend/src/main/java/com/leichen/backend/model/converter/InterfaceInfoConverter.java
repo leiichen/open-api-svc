@@ -1,5 +1,6 @@
 package com.leichen.backend.model.converter;
 
+import com.leichen.apicommon.model.entity.InterfaceInfo;
 import com.leichen.backend.common.PageResp;
 import com.leichen.backend.model.BO.InterfaceInfoBO;
 import com.leichen.backend.model.DO.InterfaceInfoDO;
@@ -22,4 +23,6 @@ public interface InterfaceInfoConverter {
     List<InterfaceInfoBO> toInterfaceInfoBOList(List<InterfaceInfoDO> interfaceInfoDOS);
 
     PageResp<InterfaceInfoResp> toInterfaceInfoResp(PageResp<InterfaceInfoBO> interfaceInfoDOPage);
+
+    InterfaceInfo toInterfaceInfo(InterfaceInfoDO anInterface);
 }
